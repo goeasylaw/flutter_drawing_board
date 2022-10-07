@@ -74,6 +74,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   /// 绘制控制器
   final DrawingController _drawingController = DrawingController();
+  Uint8List? imageMemory;
 
   @override
   void dispose() {
@@ -113,39 +114,67 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(icon: const Icon(Icons.check), onPressed: _getImageData)
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: DrawingBoard(
-              controller: _drawingController,
-              background:
-                  Container(width: 400, height: 400, color: Colors.white),
-              foreground: Image.asset('images/drawing_horse.png', width: 400, height: 400),
-              showDefaultActions: true,
-              showDefaultTools: true,
-              defaultToolsBuilder: (Type t, _) {
-                return DrawingBoard.defaultTools(t, _drawingController)
-                  ..insert(
-                    1,
-                    DefToolItem(
-                      icon: Icons.change_history_rounded,
-                      isActive: t == Triangle,
-                      onTap: () =>
-                        _drawingController.setPaintContent = Triangle(),
-                    ),
-                  );
-              },
-            ),
+      body: Stack(
+        children: [
+          Column(
+            children: <Widget>[
+              Expanded(
+                child: DrawingBoard(
+                  controller: _drawingController,
+                  background:
+                  Container(width: 400, height: 400, color: Colors.transparent),
+                  foreground: Image.asset('images/drawing_horse.png', width: 400, height: 400),
+                  showDefaultActions: true,
+                  showDefaultTools: true,
+                  defaultToolsBuilder: (Type t, _) {
+                    return DrawingBoard.defaultTools(t, _drawingController)
+                      ..insert(
+                        1,
+                        DefToolItem(
+                          icon: Icons.change_history_rounded,
+                          isActive: t == Triangle,
+                          onTap: () =>
+                          _drawingController.setPaintContent = Triangle(),
+                        ),
+                      );
+                  },
+                ),
+              ),
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () async {
+                        //저장한다.
+                        imageMemory = (await _drawingController.getImageData())!.buffer.asUint8List();
+                        setState(() {
+                        });
+                      },
+                      child: Text('저장하기')
+                  )
+                ],
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: SelectableText(
+                  'https://github.com/xSILENCEx/flutter_drawing_board',
+                  style: TextStyle(fontSize: 10, color: Colors.white),
+                ),
+              ),
+            ],
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: SelectableText(
-              'https://github.com/xSILENCEx/flutter_drawing_board',
-              style: TextStyle(fontSize: 10, color: Colors.white),
-            ),
-          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: 400,
+              height: 400,
+              color: Colors.blue,
+              child: imageMemory==null?SizedBox():Image.memory(imageMemory!, width: 400, height: 400),
+            )
+          )
+
         ],
-      ),
+      )
     );
   }
 }
