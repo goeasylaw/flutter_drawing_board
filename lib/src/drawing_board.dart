@@ -24,6 +24,7 @@ class DrawingBoard extends StatefulWidget {
   const DrawingBoard({
     Key? key,
     required this.background,
+    this.foreground,
     this.controller,
     this.showDefaultActions = false,
     this.showDefaultTools = false,
@@ -39,6 +40,7 @@ class DrawingBoard extends StatefulWidget {
 
   /// 画板背景控件
   final Widget background;
+  final Widget? foreground;
 
   /// 画板控制器
   final DrawingController? controller;
@@ -150,7 +152,7 @@ class _DrawingBoardState extends State<DrawingBoard>
         child: ExValueBuilder<DrawConfig>(
           valueListenable: _drawingController.drawConfig,
           shouldRebuild: (DrawConfig p, DrawConfig n) => p.angle != n.angle,
-          child: Stack(children: <Widget>[_buildImage, _buildPainter]),
+          child: Stack(children: <Widget>[_buildImage, _buildPainter, if (_foregroundImage==null) const SizedBox() else IgnorePointer(child: _foregroundImage!)]),
           builder: (_, DrawConfig dc, Widget? child) {
             return RotatedBox(quarterTurns: dc.angle, child: child);
           },
@@ -161,6 +163,8 @@ class _DrawingBoardState extends State<DrawingBoard>
 
   /// 构建背景
   Widget get _buildImage => widget.background;
+
+  Widget? get _foregroundImage => widget.foreground;
 
   /// 构建绘制层
   Widget get _buildPainter {

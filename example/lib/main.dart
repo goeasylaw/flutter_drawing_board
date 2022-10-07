@@ -120,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
               controller: _drawingController,
               background:
                   Container(width: 400, height: 400, color: Colors.white),
+              foreground: Image.asset('images/drawing_horse.png', width: 400, height: 400),
               showDefaultActions: true,
               showDefaultTools: true,
               defaultToolsBuilder: (Type t, _) {
@@ -130,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: Icons.change_history_rounded,
                       isActive: t == Triangle,
                       onTap: () =>
-                          _drawingController.setPaintContent = Triangle(),
+                        _drawingController.setPaintContent = Triangle(),
                     ),
                   );
               },
